@@ -1,5 +1,5 @@
 # Free4GameDevsX2Scaler
-A free pixel-art upscaler for Unity using the MIT license, designed specifically for game developers. Open-source and for use commercially and non-commercially.
+A free pixel-art upscaler for Unity using the Creative Commons 0 license, designed specifically for game developers. Open-source and for use commercially and non-commercially, both the source and what you run through it are both completely free to modify, use and sell.
 
 # Current Version
 1.0
