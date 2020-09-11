@@ -1,6 +1,9 @@
 # Free4GameDevsX2Scaler
 A free pixel-art upscaler for Unity using the MIT license, designed specifically for game developers. Open-source and for use commercially and non-commercially.
 
+# Current Version
+1.0
+
 # Installation
 Free4GameDevsX2-master must either be in the Assets root directory, or the Standard Assets
 directory (the latter is recommended!). It can be named either 'Free4GameDevsX2' or 
@@ -16,6 +19,9 @@ hit the 'Scale!' button and it takes what's in the InputFolder, processes it, an
 in the same folder hierarchy in the OutputFolder with the same exact name. 
 
 # IMPORTANT
+Your image needs to be pixel perfect for the best results (not enlarged). Alpha is also not supported
+as of this version.
+
 If you drag your image into the InputFolder these settings should be set for your automatically, 
 however if for whatever reason they aren't, these are the Unity settings for the texture
 that you want: 
