@@ -25,11 +25,15 @@ scene. The problem with the GPL license is that it can be very vague. If you do 
 xBR, HQx or xBRZ, it's vague whether it would be considered a derivitive work if your
 game happened to sell partially due to it having upscaled graphics by these algorithms. 
 
-If you went and made a million dollars and your game sold mostly due to using xBRZ 
-upscaling for example, and you didn't give back well....first of all, you're a douche, 
-but second of all you could get sued. There's the problem today of mob law/twitter 
-communities to deal with as well, so even if something isn't illegal, you want absolute
-permission and to give proper credit to people.
+So this is a new scaling algorithm that's licensed with the Creative Commons 
+CC0 1.0 Universal license, the freest license available in 2020.
+
+You can truly use this any way you want, improve it and tweak it the way you want it to 
+be, and not fear legal consequences.
+
+------------------------------------------------------------------------------------------
+
+# How Is It Different?
 
 F4GDX2 scaling doesn't work in the same way that xBR, HQx or xBRZ does, but it is 
 fairly similar. It's not designed to be used as a shader, and it's much more simple
@@ -37,20 +41,11 @@ minded. It does a series of passes (13 as of writing this) that detect first
 boxes then checker patterns, then try to fill in curves and lines. 
 
 I've commented the code, it's not a whole lot but it was a pain in the ass to get up
-and working, and everything is there to make modifications and improve on it.
+and working, but everything is there to make modifications and improve on it now.
 
 If you'd like to contibute to the source code of the project, I do ask that you keep it 
 free for the game development community, but I'm not going to control you with a GPL license 
 in order to do that or come after you later with a twitter post or something.
-
-I threw the MIT license on this upscaler, I mean for that to apply for the source code, 
-the original 'algorithm' or whatever you'd call it, for if you use it to upscale or put 
-fx on your graphics or textures as well.
-
-You can truly use this any way you want, improve it and tweak it the way you want it to 
-be, and not fear legal consequences, at least that's my intention.
-
-------------------------------------------------------------------------------------------
 
 # Contact
 If you like it, use it, if you make changes or add to it, e-mail astralojia@gmail.com, 
