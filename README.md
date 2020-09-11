@@ -26,22 +26,25 @@ xBR, HQx or xBRZ, it's vague whether it would be considered a derivitive work if
 game happened to sell partially due to it having upscaled graphics by these algorithms. 
 
 So this is a new scaling algorithm that's licensed with the Creative Commons 
-CC0 1.0 Universal license, the freest license available in 2020.
+CC0 1.0 Universal license, the freest license available in 2020, and does not use
+a shred of code or thought from previous scalers.
 
 You can truly use this any way you want, improve it and tweak it the way you want it to 
-be, and not fear legal consequences.
+be, sell your games and not fear legal consequences.
 
 ------------------------------------------------------------------------------------------
 
 # How Is It Different?
 
-F4GDX2 scaling doesn't work in the same way that xBR, HQx or xBRZ does, but it is 
-fairly similar. It's not designed to be used as a shader, and it's much more simple
+F4GDX2 scaling doesn't work in the same way that xBR, HQx, Eagle or xBRZ, etc... do, but it is 
+fairly similar in some ways. It's not designed to be used as a shader, and it's much more simple
 minded. It does a series of passes (13 as of writing this) that detect first
-boxes then checker patterns, then try to fill in curves and lines. 
+boxes then checker patterns, then try to fill in curves and lines after. It converts a Unity
+Texture2D into a List<HSLColor>() and takes snapshots across the texture, detecting shapes, 
+changing the List, then outputting it back into a Texture2D and saving it.
 
 I've commented the code, it's not a whole lot but it was a pain in the ass to get up
-and working, but everything is there to make modifications and improve on it now.
+and working. Everything is there to make modifications and improve on it now, though.
 
 If you'd like to contibute to the source code of the project, I do ask that you keep it 
 free for the game development community, but I'm not going to control you with a GPL license 
