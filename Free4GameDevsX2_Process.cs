@@ -159,7 +159,6 @@ namespace Free4GameDevsX2
 
 
                     //This is our check for a checker pattern. 
-                    //This is similar to how xBR or xBRZ or HQx upscaling works. 
 
                     //What you're doing is checking that 
                     //side A is very close to side D, and 
@@ -167,9 +166,9 @@ namespace Free4GameDevsX2
 
                     //We then check which one is lighter with a very similar equasion to xBR: 
                     //For the bottom left to top right checker it's: 
-                    //4.L + 14.L + 1.L + 11.L + 0.L + 15.L + (4 * 5.L + 10.L)
+                    //4.L + 14.L + 1.L + 11.L + (2 * 0.L + 15.L) + (2 * 5.L + 10.L)
                     //And for the bottom right to top left check it's: 
-                    //3.L + 12.L + 2.L + 8.L + 7.L + 13.L + (4 * 6.L + 9.L)
+                    //2.L + 8.L + 7.L + 13.L + (2 * 3.L + 12.L) + (2 * 6.L + 9.L)
 
                     //How this differs from xBR or xBRZ, is that in xBR you're checking for how 
                     //far a color is from one another. This new one only checks for 
@@ -247,8 +246,8 @@ namespace Free4GameDevsX2
                             if (HSLColor.ClrsVryCls(Snp[0], Snp[3]) == false
                                 && HSLColor.ClrsVryCls(Snp[12], Snp[15]) == false)
                             {
-                                double light_BLft_To_TRgt = Snp[4].L + Snp[14].L + Snp[1].L + Snp[11].L + Snp[0].L + Snp[15].L + (4 * Snp[5].L + Snp[10].L);
-                                double light_BRgt_To_TLft = Snp[3].L + Snp[12].L + Snp[2].L + Snp[8].L + Snp[7].L + Snp[13].L + (4 * Snp[6].L + Snp[9].L);
+                                double light_BLft_To_TRgt = Snp[4].L + Snp[14].L + Snp[1].L + Snp[11].L + (2 * Snp[0].L + Snp[15].L) + (2 * Snp[5].L + Snp[10].L);
+                                double light_BRgt_To_TLft = Snp[2].L + Snp[8].L + Snp[7].L + Snp[13].L + (2 * Snp[12].L + Snp[3].L) + (2 * Snp[6].L + Snp[9].L);
 
                                 //Darker is less
                                 if (light_BLft_To_TRgt < light_BRgt_To_TLft)

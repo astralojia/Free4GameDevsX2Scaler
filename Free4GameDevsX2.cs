@@ -11,9 +11,10 @@ namespace Free4GameDevsX2
     public class Free4GameDevsX2 : MonoBehaviour
     {
 
-        //Please set default input folder path here: 
+        //These are set in SetPaths() below...
         public static string inputFolderPath;
-        public static string outputFolderPath = "Standard Assets\\Free4GameDevsX2Scaler\\OutputFolder\\";
+        public static string outputFolderPath;
+        public static string rootRelPath;
 
         #region DECLAREVALUES
 
@@ -23,9 +24,6 @@ namespace Free4GameDevsX2
         }
 
         public PixelScanner pixelScanner;
-
-        public bool useCustomInputFolder;
-        public string customInputFolder;
 
         public Texture2D inputTexture;
         public Texture2D outputTexture;
@@ -44,20 +42,15 @@ namespace Free4GameDevsX2
         public void StartUp()
         {
 
-            if (useCustomInputFolder)
-            {
-                inputFolderPath = customInputFolder;
-            } else
-            {
-                inputFolderPath = "Assets/Standard Assets/Free4GameDevsX2Scaler/InputFolder/";
-            }
+            if (SetPaths() == false)
+                return;
 
 
             string[] files = Directory.GetFiles(inputFolderPath, "*.*", SearchOption.AllDirectories);
             List<string> pngFilePaths = new List<string>();
 
             foreach (string file in files)
-            { 
+            {
                 if (Path.GetExtension(file).ToLower() == ".png" || Path.GetExtension(file).ToLower() == ".gif"
                     || Path.GetExtension(file).ToLower() == "tga" || Path.GetExtension(file).ToLower() == ".jpg"
                     || Path.GetExtension(file).ToLower() == ".jpeg")
@@ -77,9 +70,57 @@ namespace Free4GameDevsX2
             }
 
 
+            Debug.Log("Scaling Successful!");
             AssetDatabase.Refresh();
 
         }
+
+
+        #region METHODS
+
+
+        private bool SetPaths()
+        {
+            if (Directory.Exists(Application.dataPath + "/Free4GameDevsX2Scaler-master"))
+            {
+                Debug.Log("master path root assets folder");
+                rootRelPath = "Assets\\Free4GameDevsX2Scaler-master\\";
+                inputFolderPath = "Assets\\Free4GameDevsX2Scaler-master\\InputFolder\\";
+                outputFolderPath = "Free4GameDevsX2Scaler-master\\OutputFolder\\";
+                return true;
+            }
+            else if (Directory.Exists(Application.dataPath + "/Free4GameDevsX2Scaler"))
+            {
+                Debug.Log("path root assets folder, regular name");
+                rootRelPath = "Assets\\Free4GameDevsX2Scaler\\";
+                inputFolderPath = "Assets\\Free4GameDevsX2Scaler\\InputFolder\\";
+                outputFolderPath = "Free4GameDevsX2Scaler\\OutputFolder\\";
+                return true;
+            }
+            else if (Directory.Exists(Application.dataPath + "/Standard Assets/Free4GameDevsX2Scaler-master"))
+            {
+                Debug.Log("standard assets folder, master name");
+                rootRelPath = "Assets\\Standard Assets\\Free4GameDevsX2Scaler-master\\";
+                inputFolderPath = "Assets\\Standard Assets\\Free4GameDevsX2Scaler-master\\InputFolder\\";
+                outputFolderPath = "Standard Assets\\Free4GameDevsX2Scaler-master\\OutputFolder\\";
+                return true;
+            }
+            else if (Directory.Exists(Application.dataPath + "/Standard Assets/Free4GameDevsX2Scaler"))
+            {
+                Debug.Log("standard assets folder, regular name");
+                rootRelPath = "Assets\\Standard Assets\\Free4GameDevsX2Scaler\\";
+                inputFolderPath = "Assets\\Standard Assets\\Free4GameDevsX2Scaler\\InputFolder\\";
+                outputFolderPath = "Standard Assets\\Free4GameDevsX2Scaler\\OutputFolder\\";
+                return true;
+            }
+            else
+            {
+                Debug.Log("Directory must be in Assets/ or Assets/Standard Assets/ folder and be named 'Free4GameDevsX2Scaler' or 'Free4GameDevsX2Scaler-master'!");
+                Debug.Log("Cannot set inputFolderPath and outputFolderPath properly!");
+                return false;
+            }
+        }
+
 
         private string GetNewOutputFilePath(string pngRelFilePth)
         {
@@ -137,9 +178,9 @@ namespace Free4GameDevsX2
             }
 
 
-            string relOutputFilePath            = GetNewOutputFilePath(pngRelFilePth);
-            string windowsOutputFilePath        = Application.dataPath + "\\" + outputFolderPath + relOutputFilePath;
-            string windowsOutputDirectoryPath   = Path.GetDirectoryName(windowsOutputFilePath) + "\\";
+            string relOutputFilePath = GetNewOutputFilePath(pngRelFilePth);
+            string windowsOutputFilePath = Application.dataPath + "\\" + outputFolderPath + relOutputFilePath;
+            string windowsOutputDirectoryPath = Path.GetDirectoryName(windowsOutputFilePath) + "\\";
 
             if (Directory.Exists(windowsOutputDirectoryPath) == false)
             {
@@ -163,7 +204,7 @@ namespace Free4GameDevsX2
             }
 
             outputTexture = new Texture2D(inputTexture.width * 2, inputTexture.height * 2);
-            outputTexture.filterMode        = FilterMode.Point;
+            outputTexture.filterMode = FilterMode.Point;
 
             pixelScanner = new PixelScanner(ref outputTexture);
 
@@ -180,8 +221,6 @@ namespace Free4GameDevsX2
 
         }
 
-
-        #region METHODS
 
         private void UpscaleNearestNeighbor(ref Texture2D outputTexture, int ScaleUpBy)
         {

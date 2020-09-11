@@ -16,6 +16,7 @@ public class TexturePostProcessor : AssetPostprocessor
         {
 			textureImporter.textureType = TextureImporterType.Sprite;
 			textureImporter.alphaIsTransparency = false;
+			textureImporter.alphaSource = TextureImporterAlphaSource.None;
 			textureImporter.filterMode = FilterMode.Point;
 			textureImporter.isReadable = true;
 			textureImporter.spriteImportMode = SpriteImportMode.None;

@@ -1,6 +1,11 @@
 # Free4GameDevsX2Scaler
 A free pixel-art upscaler for Unity using the MIT license, designed specifically for game developers. Open-source and for use commercially and non-commercially.
 
+# Installation
+Free4GameDevsX2-master must either be in the Assets root directory, or the Standard Assets
+directory (the latter is recommended!). It can be named either 'Free4GameDevsX2' or 
+'Free4GameDevsX2-master' (default Github name).
+
 # How To Use
 Drag your files into the 'InputFolder'. Unity will automatically change it's texture 
 settings to work with the Scanner. SVG and JPG files may work, right now it's compatible with 
@@ -9,6 +14,19 @@ settings to work with the Scanner. SVG and JPG files may work, right now it's co
 You add the script 'Free4GameDevsX2' to an inspector on a game object in your scene. You then 
 hit the 'Scale!' button and it takes what's in the InputFolder, processes it, and places it 
 in the same folder hierarchy in the OutputFolder with the same exact name. 
+
+# IMPORTANT
+If you drag your image into the InputFolder these settings should be set for your automatically, 
+however if for whatever reason they aren't, these are the Unity settings for the texture
+that you want: 
+
++ Advanced - > Non-Power of 2: NONE  (this is REALLY important!!)
++ Advanced - > Read/Write Enabled: TRUE
++ Filter Mode - > Point (no filter)
++ Format: Automatic
+
+If Non-Power of 2 is set to anything but NONE, the texture will not run through the algorithm properly
+and will come out blurry. 
 
 ------------------------------------------------------------------------------------------
 
