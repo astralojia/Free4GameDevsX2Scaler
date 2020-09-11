@@ -52,7 +52,7 @@ be, and not fear legal consequences, at least that's my intention.
 
 ------------------------------------------------------------------------------------------
 
-[Contact]
+# Contact
 If you like it, use it, if you make changes or add to it, e-mail astralojia@gmail.com, 
 I'd love to hear about it!
 
