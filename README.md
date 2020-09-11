@@ -22,7 +22,7 @@ in the same folder hierarchy in the OutputFolder with the same exact name.
 Your image needs to be pixel perfect for the best results (not enlarged). Alpha is also not supported
 as of this version.
 
-If you drag your image into the InputFolder these settings should be set for your automatically, 
+If you drag your image into the InputFolder these settings should be set for you automatically, 
 however if for whatever reason they aren't, these are the Unity settings for the texture
 that you want: 
 
