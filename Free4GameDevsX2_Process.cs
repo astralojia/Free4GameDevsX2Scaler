@@ -28,7 +28,7 @@ namespace Free4GameDevsX2
             }
         }
 
-        public static void Shapes(int scannerX, int scannerY, int texWidth, int passNumber, ref HSLColor[] Snp)
+        public static void Shapes(int scannerX, int scannerY, int texWidth, int passNumber, ref HSLColor[] Snp, bool SoftenIt, bool ThickerLines)
         {
 
             // --- Checkers
@@ -40,13 +40,23 @@ namespace Free4GameDevsX2
                 double lightAD = Snp[4].L + Snp[14].L + Snp[1].L + Snp[11].L + (2 * Snp[0].L + Snp[15].L) + (2 * Snp[5].L + Snp[10].L);
                 double lightBC = Snp[2].L + Snp[8].L + Snp[7].L + Snp[13].L + (2 * Snp[12].L + Snp[3].L) + (2 * Snp[6].L + Snp[9].L);
 
-                //Darker is less
-                if (lightBC < lightAD)
+                if (ThickerLines)
                 {
-
-                    //Take over 9 with 5 and take over 6 with 10
-                    Snp[5].FillWithColor(Snp[6], scannerX, scannerY, texWidth);
-                    Snp[10].FillWithColor(Snp[9], scannerX, scannerY, texWidth);
+                    //Darker is less
+                    if (lightBC < lightAD)
+                    {
+                        //Take over 9 with 5 and take over 6 with 10
+                        Snp[5].FillWithColor(Snp[6], scannerX, scannerY, texWidth, false, SoftenIt);
+                        Snp[10].FillWithColor(Snp[9], scannerX, scannerY, texWidth, false, SoftenIt);
+                    }
+                } else if (ThickerLines == false)
+                {
+                    if (lightBC > lightAD)
+                    {
+                        //Take over 9 with 5 and take over 6 with 10
+                        Snp[5].FillWithColor(Snp[6], scannerX, scannerY, texWidth, false, SoftenIt);
+                        Snp[10].FillWithColor(Snp[9], scannerX, scannerY, texWidth, false, SoftenIt);
+                    }
                 }
             }
             //if A == D
@@ -57,13 +67,25 @@ namespace Free4GameDevsX2
                 double lightAD = Snp[4].L + Snp[14].L + Snp[1].L + Snp[11].L + (2 * Snp[0].L + Snp[15].L) + (2 * Snp[5].L + Snp[10].L);
                 double lightBC = Snp[2].L + Snp[8].L + Snp[7].L + Snp[13].L + (2 * Snp[12].L + Snp[3].L) + (2 * Snp[6].L + Snp[9].L);
 
-                //Darker is less
-                if (lightAD < lightBC)
+                if (ThickerLines)
                 {
+                    //Darker is less
+                    if (lightAD < lightBC)
+                    {
 
-                    //Take over 9 with 5 and take over 6 with 10
-                    Snp[9].FillWithColor(Snp[5], scannerX, scannerY, texWidth);
-                    Snp[6].FillWithColor(Snp[10], scannerX, scannerY, texWidth);
+                        //Take over 9 with 5 and take over 6 with 10
+                        Snp[9].FillWithColor(Snp[5], scannerX, scannerY, texWidth, false, SoftenIt);
+                        Snp[6].FillWithColor(Snp[10], scannerX, scannerY, texWidth, false, SoftenIt);
+                    }
+                } else if (ThickerLines == false)
+                {
+                    if (lightAD > lightBC)
+                    {
+
+                        //Take over 9 with 5 and take over 6 with 10
+                        Snp[9].FillWithColor(Snp[5], scannerX, scannerY, texWidth, false, SoftenIt);
+                        Snp[6].FillWithColor(Snp[10], scannerX, scannerY, texWidth, false, SoftenIt);
+                    }
                 }
             }
 
@@ -79,7 +101,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[9], Snp[0], Snp[1], Snp[2], Snp[4], Snp[5], Snp[10], Snp[11], Snp[14], Snp[15]))
                     {
                         if (Snp[10].L > Snp[6].L)
-                            Snp[10].FillWithColor(Snp[6], scannerX, scannerY, texWidth);
+                            Snp[10].FillWithColor(Snp[6], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -91,7 +113,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[10], Snp[1], Snp[2], Snp[3], Snp[6], Snp[7], Snp[8], Snp[9], Snp[12], Snp[13]))
                     {
                         if (Snp[9].L > Snp[5].L)
-                            Snp[9].FillWithColor(Snp[5], scannerX, scannerY, texWidth);
+                            Snp[9].FillWithColor(Snp[5], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -103,7 +125,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[6], Snp[0], Snp[1], Snp[4], Snp[5], Snp[13], Snp[14], Snp[15], Snp[10], Snp[11]))
                     {
                         if (Snp[5].L > Snp[6].L)
-                            Snp[5].FillWithColor(Snp[6], scannerX, scannerY, texWidth);
+                            Snp[5].FillWithColor(Snp[6], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -115,7 +137,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[5], Snp[12], Snp[13], Snp[14], Snp[8], Snp[9], Snp[6], Snp[7], Snp[2], Snp[3]))
                     {
                         if (Snp[6].L > Snp[5].L)
-                            Snp[6].FillWithColor(Snp[5], scannerX, scannerY, texWidth);
+                            Snp[6].FillWithColor(Snp[5], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -130,7 +152,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[9], Snp[14], Snp[15], Snp[8], Snp[10], Snp[11], Snp[4], Snp[5], Snp[1], Snp[2]))
                     {
                         if (Snp[10].L > Snp[9].L)
-                            Snp[10].FillWithColor(Snp[9], scannerX, scannerY, texWidth);
+                            Snp[10].FillWithColor(Snp[9], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -142,7 +164,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[9], Snp[13], Snp[14], Snp[10], Snp[11], Snp[4], Snp[5], Snp[7], Snp[0], Snp[1]))
                     {
                         if (Snp[5].L > Snp[9].L)
-                            Snp[5].FillWithColor(Snp[9], scannerX, scannerY, texWidth);
+                            Snp[5].FillWithColor(Snp[9], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -154,7 +176,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[5], Snp[13], Snp[8], Snp[9], Snp[4], Snp[14], Snp[6], Snp[7], Snp[2], Snp[3]))
                     {
                         if (Snp[6].L > Snp[5].L)
-                            Snp[6].FillWithColor(Snp[5], scannerX, scannerY, texWidth);
+                            Snp[6].FillWithColor(Snp[5], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -166,7 +188,7 @@ namespace Free4GameDevsX2
                     if (!HSLColor.ClrsVryCls(Snp[10], Snp[12], Snp[13], Snp[8], Snp[9], Snp[1], Snp[2], Snp[6], Snp[7], Snp[11]))
                     {
                         if (Snp[9].L > Snp[10].L)
-                            Snp[9].FillWithColor(Snp[10], scannerX, scannerY, texWidth);
+                            Snp[9].FillWithColor(Snp[10], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -182,7 +204,7 @@ namespace Free4GameDevsX2
                     //B with one A compared to them
                     if (HSLColor.ClrsVryCls(Snp[13], Snp[14], Snp[15], Snp[11], Snp[7]))
                     {
-                        Snp[10].FillWithColor(Snp[11], scannerX, scannerY, texWidth);
+                        Snp[10].FillWithColor(Snp[11], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -195,7 +217,7 @@ namespace Free4GameDevsX2
                     //B with one A compared to them
                     if (HSLColor.ClrsVryCls(Snp[8], Snp[4], Snp[0], Snp[1], Snp[2]))
                     {
-                        Snp[5].FillWithColor(Snp[4], scannerX, scannerY, texWidth);
+                        Snp[5].FillWithColor(Snp[4], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -208,7 +230,7 @@ namespace Free4GameDevsX2
                     //B with one A compared to them
                     if (HSLColor.ClrsVryCls(Snp[12], Snp[13], Snp[14], Snp[8], Snp[4]))
                     {
-                        Snp[9].FillWithColor(Snp[8], scannerX, scannerY, texWidth);
+                        Snp[9].FillWithColor(Snp[8], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
@@ -221,7 +243,7 @@ namespace Free4GameDevsX2
                     //B with one A compared to them
                     if (HSLColor.ClrsVryCls(Snp[1], Snp[2], Snp[3], Snp[7], Snp[11]))
                     {
-                        Snp[6].FillWithColor(Snp[7], scannerX, scannerY, texWidth);
+                        Snp[6].FillWithColor(Snp[7], scannerX, scannerY, texWidth, false, SoftenIt);
                     }
                 }
             }
