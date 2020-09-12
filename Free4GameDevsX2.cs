@@ -18,6 +18,10 @@ namespace Free4GameDevsX2
 
         #region DECLAREVALUES
 
+
+        public string outputNameAddon = "";
+        public bool ThickerLines;
+        public bool SoftenIt;
         public static int GetIndex(int x, int y)
         {
             return x * (y+1);
@@ -45,7 +49,6 @@ namespace Free4GameDevsX2
             if (SetPaths() == false)
                 return;
 
-
             string[] files = Directory.GetFiles(inputFolderPath, "*.*", SearchOption.AllDirectories);
             List<string> pngFilePaths = new List<string>();
 
@@ -56,6 +59,7 @@ namespace Free4GameDevsX2
                     || Path.GetExtension(file).ToLower() == ".jpeg")
                 {
                     string relativeFileP = Path.GetDirectoryName(file) + "\\" + Path.GetFileName(file);
+                    Debug.Log("relativeFileP: " + relativeFileP);
                     pngFilePaths.Add(relativeFileP);
                 }
             }
@@ -67,12 +71,30 @@ namespace Free4GameDevsX2
             foreach (string pngRelFilePth in pngFilePaths)
             {
                 Scale(pngRelFilePth);
+                SaveTexture(pngRelFilePth);
             }
+
+
+            
 
 
             Debug.Log("Scaling Successful!");
             AssetDatabase.Refresh();
 
+        }
+
+        private void SaveTexture(string pngRelFilePth)
+        {
+            string relOutputFilePath = GetNewOutputFilePath(pngRelFilePth);
+            string windowsOutputFilePath = Application.dataPath + "\\" + outputFolderPath + Path.GetFileNameWithoutExtension(relOutputFilePath) + outputNameAddon + Path.GetExtension(relOutputFilePath);
+            string windowsOutputDirectoryPath = Path.GetDirectoryName(windowsOutputFilePath) + "\\";
+
+            if (Directory.Exists(windowsOutputDirectoryPath) == false)
+            {
+                Directory.CreateDirectory(windowsOutputDirectoryPath);
+            }
+
+            SaveTexture2DToPNG(outputTexture, windowsOutputFilePath, WriteToFileType.PNG);
         }
 
 
@@ -177,18 +199,6 @@ namespace Free4GameDevsX2
                     break;
             }
 
-
-            string relOutputFilePath = GetNewOutputFilePath(pngRelFilePth);
-            string windowsOutputFilePath = Application.dataPath + "\\" + outputFolderPath + relOutputFilePath;
-            string windowsOutputDirectoryPath = Path.GetDirectoryName(windowsOutputFilePath) + "\\";
-
-            if (Directory.Exists(windowsOutputDirectoryPath) == false)
-            {
-                Directory.CreateDirectory(windowsOutputDirectoryPath);
-            }
-
-            SaveTexture2DToPNG(outputTexture, windowsOutputFilePath, WriteToFileType.PNG);
-
         }
 
         private void RunIt(string textureToLoadPath)
@@ -212,7 +222,7 @@ namespace Free4GameDevsX2
 
             HSLColor.InitializeColorsList(outputTexture);
 
-            MainPass(); //< - Where everything happens.
+            MainPass(SoftenIt); //< - Where everything happens.
 
             outputTexture = HSLColor.ApplyToTexture2D(outputTexture);
             outputTexture.Apply();
@@ -237,7 +247,7 @@ namespace Free4GameDevsX2
                 outputTexture.Apply();
         }
 
-        private void MainPass()
+        private void MainPass(bool SoftenIt)
         {
             int totalPasses = 1;
             int texW = outputTexture.width;
@@ -248,7 +258,7 @@ namespace Free4GameDevsX2
                 {
                     for (int scnX = 0; scnX < texW; scnX++)
                     {
-                        pixelScanner.DoPass(ref HSLColor.ColorsList, ref scnX, ref scnY, texW, texH, passNumber); //width is also passed to find x,y in a one dimensional array/list with equasion: x + (y * width)
+                        pixelScanner.DoPass(ref HSLColor.ColorsList, ref scnX, ref scnY, texW, texH, passNumber, SoftenIt, ThickerLines); //width is also passed to find x,y in a one dimensional array/list with equasion: x + (y * width)
                     }
                 }
             }
