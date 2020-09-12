@@ -49,60 +49,11 @@ namespace Free4GameDevsX2
             if (isOnGrid(scannerX, scannerY, texWidth, texHeight, 2) == false) //2 for 16 size here
                 return;
 
-            //We have 13 passes to run through, passes 0-12 are 13 total passes. 
-            //GetSnapshot_Array gets an 4x4 snapshot of where the scanner's origin (scannerX, scannerY) currently is
-                //on the texture. Remember that Unity runs from bottom to top with Y, so the scanner starts from the bottom left and 
-                    //works it's way to the top right.
-
-            //We grab the snapshot from HSLColor.ColorsList, a 1 dimensional List<HSLColor>().
-
-            //Right now we're checking for BoxesNCheckers, UnfilledCurves and UnfilledLines. We
-                //can add more checks. See the last commented out pass:
-
-            if (passNumber >= 0 && passNumber <= 4)
-            {
-                GetSnapshot_Array(scannerX, scannerY, texWidth);
-                if (SnapshotIsAPatternThatWeNeverSee())  // < - This is optimization
-                    return;
-                Process.BoxesNCheckers(scannerX, scannerY, texWidth, passNumber, ref Snp); // < - This is where it checks for patterns
-                SetSnapshot_Array(scannerX, scannerY, texWidth);
-            }
-            if (passNumber >= 5 && passNumber <= 8)
-            {
-                GetSnapshot_Array(scannerX, scannerY, texWidth);
-                if (SnapshotIsAPatternThatWeNeverSee())
-                    return;
-                Process.UnFilledCurves(scannerX, scannerY, texWidth, passNumber, ref Snp);
-                SetSnapshot_Array(scannerX, scannerY, texWidth);
-            }
-            if (passNumber >= 9 && passNumber <= 12)
-            {
-                GetSnapshot_Array(scannerX, scannerY, texWidth);
-                if (SnapshotIsAPatternThatWeNeverSee())
-                    return;
-                Process.UnFilledLines(scannerX, scannerY, texWidth, passNumber, ref Snp);
-                SetSnapshot_Array(scannerX, scannerY, texWidth);
-            }
-
-            //To add another process, you first need to create something like this. 
-                //Before this will work you need to modify the line in Free4GameDevsX2.cs:
-                //int totalPasses = 13;
-            
-                //If passNumber >= 13 && passNumber <= 16 below, you need int totalPasses to = 17! (because 13 && 16 are zero index, it starts at 0 not 1)
-
-            //if (passNumber >= 13 && passNumber <= 16)
-            //{
-                //GetSnapshot_Array(scannerX, scannerY, texWidth);
-                //if (SnapshotIsAPatternThatWeNeverSee())
-                //return;
-                //Process.EXAMPLEPROCESS(scannerX, scannerY, texWidth, passNumber, ref Snp);
-                //SetSnapshot_Array(scannerX, scannerY, texWidth);
-            //}
-
-
-            //'Process' is the Process class located in Free4GameDevsX2_Process.cs. 
-            //
-
+            GetSnapshot_Array(scannerX, scannerY, texWidth);
+            if (SnapshotIsAPatternThatWeNeverSee())  // < - This is optimization
+                return;
+            Process.Shapes(scannerX, scannerY, texWidth, passNumber, ref Snp); // < - This is where it checks for patterns
+            SetSnapshot_Array(scannerX, scannerY, texWidth);
         }
 
         private bool isOnGrid(int scannerX, int scannerY, int texWidth, int texHeight, int SizeOfSnapshot_SquareRootedTwice)
