@@ -239,7 +239,7 @@ namespace Free4GameDevsX2
 
         private void MainPass()
         {
-            int totalPasses = 13;
+            int totalPasses = 1;
             int texW = outputTexture.width;
             int texH = outputTexture.height;
             for (int passNumber = 0; passNumber < totalPasses; passNumber++)
