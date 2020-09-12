@@ -188,21 +188,18 @@ namespace Free4GameDevsX2
             L = _L;
         }
 
-        public void FillWithColor(HSLColor hslColorToFillWith, int x, int y, int texWidth, bool ignoreIfAlreadyFilled = false)
+        public void FillWithColor(HSLColor hslColorToFillWith, int x, int y, int texWidth, bool ignoreIfAlreadyFilled = false, bool AntiAliasing = false)
         {
-            //This could be feasibly modified to actually shift the color in the 
-                //direction of the 'hslColorToFillWith', creating an anti-aliasing or bilinear like 
-                    //effect. 
-
-            //In future versions, this could work way better than simply filling it with the hslColorToFillWith. 
-
-            //Since we also have x, y, and texWidth, it's feasible that you could even check for colors around it on the 
-                //HSLColor.ColorsList.
-
             if (ignoreIfAlreadyFilled)
                 return;
 
-            SetToColor(hslColorToFillWith);
+            if (AntiAliasing == false)
+            {
+                SetToColor(hslColorToFillWith);
+            } else
+            {
+                SetToColor_Antialias(hslColorToFillWith);
+            }
             SetToFilled(x, y, texWidth);
         }
         private void SetToColor(HSLColor hslColorToSetTo)
@@ -219,6 +216,12 @@ namespace Free4GameDevsX2
                 S = hslColorToSetTo.S;
                 L = hslColorToSetTo.L;
             }
+        }
+        private void SetToColor_Antialias(HSLColor hslColorToSetCloserTo)
+        {
+            H = (double)Mathf.Lerp((float)H, (float)hslColorToSetCloserTo.H, 0.95f);
+            S = (double)Mathf.Lerp((float)S, (float)hslColorToSetCloserTo.S, 0.38f);
+            L = (double)Mathf.Lerp((float)L, (float)hslColorToSetCloserTo.L, 0.38f);
         }
 
         public bool isOffGrid = false;
