@@ -9,14 +9,31 @@ namespace Free4GameDevsX2 {
     {
 
         Free4GameDevsX2 F4GDX2;
+        int On = 0;
 
         void OnEnable()
         {
             F4GDX2 = (Free4GameDevsX2)target;
         }
 
+        private void OnDisable()
+        {
+            On = 0;
+            F4GDX2.RemoveFromEditorCallback();
+        }
+        private void OnDestroy()
+        {
+            On = 0;
+            F4GDX2.RemoveFromEditorCallback();
+        }
+
         public override void OnInspectorGUI()
         {
+            if (On == 1)
+            {
+                F4GDX2.AddToEditorCallback();
+            }
+            On++;
 
                 EditorGUILayout.LabelField(":: F4GDX2 SCALING ::");
                 EditorGUILayout.LabelField(" Free for all indie developers to use in their games.");
@@ -25,6 +42,11 @@ namespace Free4GameDevsX2 {
                 EditorGUILayout.BeginHorizontal("box");
                 EditorGUILayout.LabelField("Output Filename Addon: ");
                 F4GDX2.outputNameAddon = EditorGUILayout.TextField(F4GDX2.outputNameAddon);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal("box");
+                EditorGUILayout.LabelField("Approach: ");
+                F4GDX2.approach = (Free4GameDevsX2.Approach)EditorGUILayout.EnumPopup(F4GDX2.approach);
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal("box");
@@ -43,9 +65,13 @@ namespace Free4GameDevsX2 {
               
                 if (GUILayout.Button("Scale"))
                 {
-                    F4GDX2.StartUp();
+                    F4GDX2.state = Free4GameDevsX2.State.Init;
+                    //you just switch the state to on.
+                    //Free4GameDevsX2 free4gamedevsx2 = new Free4GameDevsX2();
                 }
 
+
+            DrawDefaultInspector();
         }
     }
 
