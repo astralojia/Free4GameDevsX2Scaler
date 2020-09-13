@@ -44,7 +44,7 @@ namespace Free4GameDevsX2
 
         #region PASS
 
-        public void DoPass(ref List<HSLColor> HSLColors, ref int scannerX, ref int scannerY, int texWidth, int texHeight, int passNumber, bool SoftenIt, bool ThickerLines)
+        public void DoTraditionalPass(ref List<HSLColor> HSLColors, ref int scannerX, ref int scannerY, int texWidth, int texHeight, int passNumber, bool SoftenIt, bool ThickerLines)
         {
             if (isOnGrid(scannerX, scannerY, texWidth, texHeight, 2) == false) //2 for 16 size here
                 return;
@@ -52,7 +52,19 @@ namespace Free4GameDevsX2
             GetSnapshot_Array(scannerX, scannerY, texWidth);
             if (SnapshotIsAPatternThatWeNeverSee())  // < - This is optimization
                 return;
-            Process.Shapes(scannerX, scannerY, texWidth, passNumber, ref Snp, SoftenIt, ThickerLines); // < - This is where it checks for patterns
+            Process.TraditionalShapes(scannerX, scannerY, texWidth, passNumber, ref Snp, SoftenIt, ThickerLines); // < - This is where it checks for patterns
+            SetSnapshot_Array(scannerX, scannerY, texWidth);
+        }
+
+        public void DoPrecisePasses(ref List<HSLColor> HSLColors, ref int scannerX, ref int scannerY, int texWidth, int texHeight, int passNumber)
+        {
+            if (isOnGrid(scannerX, scannerY, texWidth, texHeight, 2) == false) //2 for 16 size here
+                return;
+
+            GetSnapshot_Array(scannerX, scannerY, texWidth);
+            //if (SnapshotIsAPatternThatWeNeverSee())  // < - This is optimization
+            //    return;
+            Process.PreciseShapes(scannerX, scannerY, texWidth, passNumber, ref Snp); // < - This is where it checks for patterns
             SetSnapshot_Array(scannerX, scannerY, texWidth);
         }
 

@@ -22,6 +22,8 @@ namespace Free4GameDevsX2
 
         #region VALUES
 
+        public bool Marked; // Marked for not changeable filling in 'precise' mode.
+
         public static double MtoL;
         public static double DtoM;
 
@@ -43,6 +45,19 @@ namespace Free4GameDevsX2
         #endregion
 
         #region METHODS
+
+        public void MarkClr()
+        {
+            Marked = true;
+        }
+
+        public static void ClrsMARK(params HSLColor[] Cs)
+        {
+            foreach (HSLColor c in Cs)
+            {
+                c.MarkClr();
+            }
+        }
 
         public static bool ClrsVryCls(params HSLColor[] Cs)
         {
@@ -188,17 +203,17 @@ namespace Free4GameDevsX2
             L = _L;
         }
 
-        public void FillWithColor(HSLColor hslColorToFillWith, int x, int y, int texWidth, bool ignoreIfAlreadyFilled = false, bool AntiAliasing = false)
+        public void FillWithColor(HSLColor hslColorToFillWith, int x, int y, int texWidth, bool SoftenIt = false)
         {
-            if (ignoreIfAlreadyFilled)
+            if (Marked) //Don't fill marked colors
                 return;
 
-            if (AntiAliasing == false)
+            if (SoftenIt == false)
             {
                 SetToColor(hslColorToFillWith);
             } else
             {
-                SetToColor_Antialias(hslColorToFillWith);
+                SetToColor_Soften(hslColorToFillWith);
             }
             SetToFilled(x, y, texWidth);
         }
@@ -217,11 +232,11 @@ namespace Free4GameDevsX2
                 L = hslColorToSetTo.L;
             }
         }
-        private void SetToColor_Antialias(HSLColor hslColorToSetCloserTo)
+        private void SetToColor_Soften(HSLColor hslColorToSetCloserTo)
         {
             H = (double)Mathf.Lerp((float)H, (float)hslColorToSetCloserTo.H, 0.95f);
-            S = (double)Mathf.Lerp((float)S, (float)hslColorToSetCloserTo.S, 0.38f);
-            L = (double)Mathf.Lerp((float)L, (float)hslColorToSetCloserTo.L, 0.38f);
+            S = (double)Mathf.Lerp((float)S, (float)hslColorToSetCloserTo.S, 0.75f);
+            L = (double)Mathf.Lerp((float)L, (float)hslColorToSetCloserTo.L, 0.50f);
         }
 
         public bool isOffGrid = false;

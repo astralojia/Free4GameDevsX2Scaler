@@ -3,6 +3,10 @@ using UnityEngine;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Reflection;
+using System.Linq;
+using UnityEditor.PackageManager.Requests;
 
 namespace Free4GameDevsX2
 {
@@ -11,13 +15,20 @@ namespace Free4GameDevsX2
     public class Free4GameDevsX2 : MonoBehaviour
     {
 
+        public static int numberOfInstances = 0;
+
         //These are set in SetPaths() below...
         public static string inputFolderPath;
         public static string outputFolderPath;
         public static string rootRelPath;
 
+        public int NumToProcess;
+
         #region DECLAREVALUES
 
+
+        public enum Approach { Traditional, Precise }
+        public Approach approach;
 
         public string outputNameAddon = "";
         public bool ThickerLines;
@@ -34,7 +45,7 @@ namespace Free4GameDevsX2
 
         public Color currentInputRGB = new Color();
         public Color currentOutputRGB = new Color();
-        public enum ScaleAmount { TwoTimes, FourTimes, EightTimes }
+        public enum ScaleAmount { TwoTimes, FourTimes, EightTimes, SixteenTimes }
         public ScaleAmount scaleAmount;
         public enum WriteToFileType { PNG, JPG, TGA }
         public WriteToFileType writeToFileType;
@@ -43,58 +54,154 @@ namespace Free4GameDevsX2
 
         #endregion
 
-        public void StartUp()
+        public enum State { Idle, Init, RunOne, NextOne, Finish  }
+        public State state;
+
+        private int TotalNumberOfProcess = 0;
+        private int CurProcess = 0;
+
+        private List<string> pngFilePaths = new List<string>();
+
+        float a;
+
+        string curFileProcName;
+
+        private void CountUpA()
         {
-
-            if (SetPaths() == false)
-                return;
-
-            string[] files = Directory.GetFiles(inputFolderPath, "*.*", SearchOption.AllDirectories);
-            List<string> pngFilePaths = new List<string>();
-
-            foreach (string file in files)
+            if (a < 1000)
             {
-                if (Path.GetExtension(file).ToLower() == ".png" || Path.GetExtension(file).ToLower() == ".gif"
-                    || Path.GetExtension(file).ToLower() == "tga" || Path.GetExtension(file).ToLower() == ".jpg"
-                    || Path.GetExtension(file).ToLower() == ".jpeg")
-                {
-                    string relativeFileP = Path.GetDirectoryName(file) + "\\" + Path.GetFileName(file);
-                    Debug.Log("relativeFileP: " + relativeFileP);
-                    pngFilePaths.Add(relativeFileP);
-                }
+                a++;
+
             }
-
-            if (HitCancelInWarningDialogs(pngFilePaths))
-                return;
-
-
-            foreach (string pngRelFilePth in pngFilePaths)
+            else
             {
-                Scale(pngRelFilePth);
-                SaveTexture(pngRelFilePth);
+                a = 0;
             }
-
-
-            
-
-
-            Debug.Log("Scaling Successful!");
-            AssetDatabase.Refresh();
 
         }
 
-        private void SaveTexture(string pngRelFilePth)
+        public void AddToEditorCallback()
+        {
+            EditorApplication.update += UpdateF4GDX2;
+        }
+        public void RemoveFromEditorCallback()
+        {
+            EditorApplication.update -= UpdateF4GDX2;
+        }
+
+
+        public void UpdateF4GDX2()
+        {
+            switch (state)
+            {
+                case State.Idle:
+
+                    //Do Nothing...
+                    break;
+                case State.Init:
+
+                    TotalNumberOfProcess = 0;
+                    CurProcess = 0;
+
+                    if (SetPaths() == false)
+                    {
+                        state = State.Finish;
+                        return;
+                    }
+
+                    string[] files = Directory.GetFiles(inputFolderPath, "*.*", SearchOption.AllDirectories);
+                    pngFilePaths = new List<string>();
+                    pngFilePaths.Clear();
+
+                    foreach (string file in files)
+                    {
+                        if (Path.GetExtension(file).ToLower() == ".png" || Path.GetExtension(file).ToLower() == ".gif"
+                            || Path.GetExtension(file).ToLower() == "tga" || Path.GetExtension(file).ToLower() == ".jpg"
+                            || Path.GetExtension(file).ToLower() == ".jpeg")
+                        {
+                            string relativeFileP = Path.GetDirectoryName(file) + "\\" + Path.GetFileName(file);
+                            pngFilePaths.Add(relativeFileP);
+                        }
+                    }
+
+                    if (HitCancelInWarningDialogs(pngFilePaths))
+                    {
+                        state = State.Finish;
+                        return;
+                    }
+
+                    TotalNumberOfProcess = pngFilePaths.Count;
+                    CurProcess = 0;
+                    curFileProcName = Path.GetFileName(pngFilePaths[CurProcess]);
+
+                    state = State.RunOne;
+
+                    break;
+                case State.RunOne:
+
+                        Scale(pngFilePaths[CurProcess]);
+                        if (SaveTexture(pngFilePaths[CurProcess]) == false)
+                        {
+                            Debug.LogError("Couldn't save texture! Cancelling batch process!");
+                            state = State.Finish;
+                            return;
+                        }
+                    if (CurProcess < TotalNumberOfProcess)
+                    {
+                        a = 0;
+                        state = State.NextOne;
+                        return;
+                    }
+
+                    break;
+                case State.NextOne:
+                    if (a > 50)
+                    {
+                        CurProcess++;
+                        if (CurProcess >= TotalNumberOfProcess)
+                        {
+                            Debug.Log("Finished Processing Textures...");
+                            state = State.Finish;
+                            return;
+                        }
+                        else
+                        {
+                            state = State.RunOne;
+                            return;
+                        }
+                    }
+                    CountUpA();
+                    break;
+                case State.Finish:
+                    TotalNumberOfProcess = 0;
+                    CurProcess = 0;
+                    AssetDatabase.Refresh();
+                    EditorUtility.ClearProgressBar();
+                    pngFilePaths.Clear();
+                    state = State.Idle;
+                    return;
+            }
+        }
+
+        private bool SaveTexture(string pngRelFilePth)
         {
             string relOutputFilePath = GetNewOutputFilePath(pngRelFilePth);
-            string windowsOutputFilePath = Application.dataPath + "\\" + outputFolderPath + Path.GetFileNameWithoutExtension(relOutputFilePath) + outputNameAddon + Path.GetExtension(relOutputFilePath);
-            string windowsOutputDirectoryPath = Path.GetDirectoryName(windowsOutputFilePath) + "\\";
+            string windowsOutputFolderPath = Application.dataPath + "\\" + rootRelPath.Substring(7, rootRelPath.Length - 7) + "\\" + "OutputFolder" + "\\";
+            string windowsOutputFile = windowsOutputFolderPath + relOutputFilePath;
+            string windowsOutputDirectoryPath = Path.GetDirectoryName(windowsOutputFile);
 
             if (Directory.Exists(windowsOutputDirectoryPath) == false)
             {
                 Directory.CreateDirectory(windowsOutputDirectoryPath);
             }
 
-            SaveTexture2DToPNG(outputTexture, windowsOutputFilePath, WriteToFileType.PNG);
+            if (SaveTexture2DToPNG(outputTexture, windowsOutputFile, WriteToFileType.PNG))
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
 
 
@@ -113,7 +220,6 @@ namespace Free4GameDevsX2
             }
             else if (Directory.Exists(Application.dataPath + "/Free4GameDevsX2Scaler"))
             {
-                Debug.Log("path root assets folder, regular name");
                 rootRelPath = "Assets\\Free4GameDevsX2Scaler\\";
                 inputFolderPath = "Assets\\Free4GameDevsX2Scaler\\InputFolder\\";
                 outputFolderPath = "Free4GameDevsX2Scaler\\OutputFolder\\";
@@ -167,6 +273,14 @@ namespace Free4GameDevsX2
                     return true;
                 }
             }
+
+            if (scaleAmount > ScaleAmount.SixteenTimes)
+            {
+                if (!EditorUtility.DisplayDialog("WARNING!", "16x is SLOW and can overload the memory if sizing too many or too large of pictures!! Are you sure!?", "I'm sure", "Cancel"))
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -197,6 +311,13 @@ namespace Free4GameDevsX2
                         RunIt(pngRelFilePth);
                     }
                     break;
+                case ScaleAmount.SixteenTimes:
+                    Debug.Log("Starting scaling x16 for ''" + Path.GetFileName(pngRelFilePth) + "''");
+                    for (int x = 0; x < 4; x++)
+                    {
+                        RunIt(pngRelFilePth);
+                    }
+                    break;
             }
 
         }
@@ -222,7 +343,7 @@ namespace Free4GameDevsX2
 
             HSLColor.InitializeColorsList(outputTexture);
 
-            MainPass(SoftenIt); //< - Where everything happens.
+            MainPass(SoftenIt, approach); //< - Where everything happens.
 
             outputTexture = HSLColor.ApplyToTexture2D(outputTexture);
             outputTexture.Apply();
@@ -247,21 +368,44 @@ namespace Free4GameDevsX2
                 outputTexture.Apply();
         }
 
-        private void MainPass(bool SoftenIt)
+        private void MainPass(bool SoftenIt, Approach approach)
         {
             int totalPasses = 1;
             int texW = outputTexture.width;
             int texH = outputTexture.height;
-            for (int passNumber = 0; passNumber < totalPasses; passNumber++)
+            switch (approach)
             {
-                for (int scnY = 0; scnY < texH; scnY++)
-                {
-                    for (int scnX = 0; scnX < texW; scnX++)
+                case Approach.Traditional:
+                    for (int passNumber = 0; passNumber < totalPasses; passNumber++)
                     {
-                        pixelScanner.DoPass(ref HSLColor.ColorsList, ref scnX, ref scnY, texW, texH, passNumber, SoftenIt, ThickerLines); //width is also passed to find x,y in a one dimensional array/list with equasion: x + (y * width)
+                        for (int scnY = 0; scnY < texH; scnY++)
+                        {
+                            for (int scnX = 0; scnX < texW; scnX++)
+                            {
+                                pixelScanner.DoTraditionalPass(ref HSLColor.ColorsList, ref scnX, ref scnY, texW, texH, passNumber, SoftenIt, ThickerLines); //width is also passed to find x,y in a one dimensional array/list with equasion: x + (y * width)
+                            }
+                        }
                     }
-                }
+                    break;
+                case Approach.Precise:
+                    totalPasses = 6;
+                    for (int passNumber = 0; passNumber < totalPasses; passNumber++)
+                    {
+                        for (int scnY = 0; scnY < texH; scnY++)
+                        {
+                            for (int scnX = 0; scnX < texW; scnX++)
+                            {
+                                pixelScanner.DoPrecisePasses(ref HSLColor.ColorsList, ref scnX, ref scnY, texW, texH, passNumber); //width is also passed to find x,y in a one dimensional array/list with equasion: x + (y * width)
+                            }
+                        }
+                    }
+                    break;
             }
+
+
+
+
+
         }
 
         private void ScalePass(int ScaleUpBy)
@@ -275,7 +419,7 @@ namespace Free4GameDevsX2
         public float Soften_SideScrapesA;
         public float Soften_SideScrapesB;
 
-        public void SaveTexture2DToPNG(Texture2D outputTexture, string windowsOutputFilePath, WriteToFileType writeToFileType)
+        public bool SaveTexture2DToPNG(Texture2D outputTexture, string windowsOutputFilePath, WriteToFileType writeToFileType)
         {
 
             //FIRSTLY, WE NEED THE WINDOWS PATH HERE!
@@ -283,7 +427,7 @@ namespace Free4GameDevsX2
             if (File.Exists(windowsOutputFilePath))
             {
                 Debug.LogError("FILE ALREADY EXISTS AT: " + windowsOutputFilePath + " !");
-                return;
+                return false;
             }
 
             switch (writeToFileType)
@@ -291,16 +435,18 @@ namespace Free4GameDevsX2
                 case WriteToFileType.TGA:
                     byte[] bytesTGA = outputTexture.EncodeToTGA();
                     File.WriteAllBytes(windowsOutputFilePath, bytesTGA);
-                    break;
+                    return true;
                 case WriteToFileType.PNG:
                     byte[] bytesPNG = outputTexture.EncodeToPNG();
                     File.WriteAllBytes(windowsOutputFilePath, bytesPNG);
-                    break;
+                    return true;
                 case WriteToFileType.JPG:
                     byte[] bytesJPG = outputTexture.EncodeToJPG();
                     File.WriteAllBytes(windowsOutputFilePath, bytesJPG);
-                    break;
+                    return true;
             }
+
+            return false;
 
 
         }
