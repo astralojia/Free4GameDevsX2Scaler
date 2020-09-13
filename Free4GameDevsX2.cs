@@ -64,7 +64,7 @@ namespace Free4GameDevsX2
 
         float a;
 
-        string curFileProcName;
+        public string curFileProcName;
 
         private void CountUpA()
         {
@@ -88,7 +88,6 @@ namespace Free4GameDevsX2
         {
             EditorApplication.update -= UpdateF4GDX2;
         }
-
 
         public void UpdateF4GDX2()
         {
