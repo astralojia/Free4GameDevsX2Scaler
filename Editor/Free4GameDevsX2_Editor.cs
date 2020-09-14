@@ -73,8 +73,6 @@ namespace Free4GameDevsX2 {
                 if (GUILayout.Button("Scale"))
                 {
                     F4GDX2.state = Free4GameDevsX2.State.Init;
-                    //you just switch the state to on.
-                    //Free4GameDevsX2 free4gamedevsx2 = new Free4GameDevsX2();
                 }
 
 
