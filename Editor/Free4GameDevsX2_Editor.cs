@@ -36,14 +36,6 @@ namespace Free4GameDevsX2 {
             On++;
 
 
-            if (F4GDX2.state == Free4GameDevsX2.State.NextOne || F4GDX2.state == Free4GameDevsX2.State.RunOne)
-            {
-                EditorUtility.DisplayProgressBar("Processing Textures", "Processing ''" + F4GDX2.curFileProcName + "''...", 0.5f);
-            } else if (F4GDX2.state == Free4GameDevsX2.State.Finish)
-            {
-                EditorUtility.ClearProgressBar();
-            }
-
                 EditorGUILayout.LabelField(":: F4GDX2 SCALING ::");
                 EditorGUILayout.LabelField(" Free for all indie developers to use in their games.");
                 EditorGUILayout.LabelField(" Open Source / CC0 (See License.txt)");
