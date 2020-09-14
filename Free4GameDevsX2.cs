@@ -30,6 +30,9 @@ namespace Free4GameDevsX2
         public enum Approach { Traditional, Precise }
         public Approach approach;
 
+        public bool ProcessChromaColor;
+        public Color ChromaKeyColor;
+
         public string outputNameAddon = "";
         public bool ThickerLines;
         public bool SoftenIt;
@@ -346,6 +349,23 @@ namespace Free4GameDevsX2
 
             outputTexture = HSLColor.ApplyToTexture2D(outputTexture);
             outputTexture.Apply();
+
+
+            if (ProcessChromaColor)
+            {
+                Color[] Pix = outputTexture.GetPixels(0, 0, outputTexture.width, outputTexture.height);
+
+                for (int x = 0; x < Pix.Length; x++)
+                {
+                    if (Pix[x] == ChromaKeyColor)
+                    {
+                        Pix[x].a = 0;
+                    }
+                }
+
+                outputTexture.SetPixels(Pix);
+            }
+
 
             timesRan++;
 
