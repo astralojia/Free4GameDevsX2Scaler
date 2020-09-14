@@ -60,6 +60,22 @@ namespace Free4GameDevsX2 {
                 F4GDX2.ThickerLines = EditorGUILayout.Toggle(F4GDX2.ThickerLines);
                 EditorGUILayout.EndHorizontal();
 
+                EditorGUILayout.BeginVertical("box");
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Chroma Key: ");
+                F4GDX2.ProcessChromaColor = EditorGUILayout.Toggle(F4GDX2.ProcessChromaColor);
+                EditorGUILayout.EndHorizontal();
+
+                if (F4GDX2.ProcessChromaColor)
+                {
+                    EditorGUILayout.BeginHorizontal("box");
+                    EditorGUILayout.LabelField("Remove Chroma Key Color: ");
+                    F4GDX2.ChromaKeyColor = EditorGUILayout.ColorField(F4GDX2.ChromaKeyColor);
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                EditorGUILayout.EndVertical();
+
                 EditorGUILayout.LabelField("Scale Amount: ");
                 F4GDX2.scaleAmount = (Free4GameDevsX2.ScaleAmount)EditorGUILayout.EnumPopup(F4GDX2.scaleAmount);
 
