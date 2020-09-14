@@ -62,14 +62,21 @@ namespace Free4GameDevsX2 {
 
                 EditorGUILayout.LabelField("Scale Amount: ");
                 F4GDX2.scaleAmount = (Free4GameDevsX2.ScaleAmount)EditorGUILayout.EnumPopup(F4GDX2.scaleAmount);
-  
-              
+
+                if (F4GDX2.state != Free4GameDevsX2.State.Idle)
+                {
+                    EditorGUILayout.LabelField("Processing Textures...");
+                    if (GUILayout.Button("!! Cancel !!"))
+                        F4GDX2.state = Free4GameDevsX2.State.Finish;
+                }
+
                 if (GUILayout.Button("Scale"))
                 {
                     F4GDX2.state = Free4GameDevsX2.State.Init;
                     //you just switch the state to on.
                     //Free4GameDevsX2 free4gamedevsx2 = new Free4GameDevsX2();
                 }
+
 
         }
     }
