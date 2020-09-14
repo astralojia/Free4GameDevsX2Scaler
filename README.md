@@ -61,9 +61,7 @@ be, sell your games and not fear legal consequences.
 # How Is It Different?
 
 F4GDX2 scaling doesn't work in the same way that xBR, HQx, Eagle or xBRZ, etc... do, but it is 
-fairly similar in some ways. It's not designed to be used as a shader, and it's much more simple
-minded. It does a series of passes (13 as of writing this) that detect first
-boxes then checker patterns, then try to fill in curves and lines after. It converts a Unity
+fairly similar in some ways. It converts a Unity
 Texture2D into a List<HSLColor>() and takes snapshots across the texture, detecting shapes, 
 changing the List, then outputting it back into a Texture2D and saving it.
 
